@@ -35,25 +35,6 @@ game:GetService("RunService").RenderStepped:Connect(function(deltaTime)
     camera.CFrame = currentCFrame * CFrame.Angles(math.rad(yRotation), math.rad(xRotation), 0)
 end)
 
-bond = true
-
-spawn(function()
-    while bond do
-        local sssss = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
-            :WaitForChild("RemotePromise"):WaitForChild("Remotes"):WaitForChild("C_ActivateObject")
-        local runtimeItems = game:GetService("Workspace"):WaitForChild("RuntimeItems")
-
-        for _, v in pairs(runtimeItems:GetChildren()) do
-            if v.Name == "Bond" or v.Name == "Bonds" then
-                sssss:FireServer(v)
-            end
-        end
-        -- Updated delay interval to reduce remote exhaustion
-        task.wait(1)
-    end
-end)
-
-
 local pathPoints = {
     Vector3.new(13.66, 120, 29620.67), Vector3.new(-15.98, 120, 28227.97),
     Vector3.new(-63.54, 120, 26911.59), Vector3.new(-75.71, 120, 25558.11),
@@ -105,7 +86,26 @@ local function scanForBonds()
     end
 end
 
-
+spawn(function()
+    while true do
+        if bond then
+            local activateObject = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("RemotePromise"):WaitForChild("Remotes"):FindFirstChild("C_ActivateObject")
+            if not activateObject then
+                print("activateObject is nil")
+            else
+                for _, v in pairs(runtime:GetChildren()) do
+                    if v.Name == "Bond" or v.Name == "Bonds" then
+                        pcall(function()
+                            activateObject:FireServer(v)
+                        end)
+                        task.wait(0.1)
+                    end
+                end
+            end
+        end
+        task.wait(0.1)
+    end
+end)
 
 spawn(function()
     foundBonds = {}
