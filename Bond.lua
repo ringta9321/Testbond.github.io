@@ -36,24 +36,22 @@ game:GetService("RunService").RenderStepped:Connect(function(deltaTime)
 end)
 
 bond = true
---- code for ringta || idk why
 
 spawn(function()
-    while true do
-        if bond then
-            local sssss = game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("RemotePromise"):WaitForChild("Remotes"):WaitForChild("C_ActivateObject")
-            local runtimeItems = game:GetService("Workspace"):WaitForChild("RuntimeItems")
+    while bond do
+        local sssss = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
+            :WaitForChild("RemotePromise"):WaitForChild("Remotes"):WaitForChild("C_ActivateObject")
+        local runtimeItems = game:GetService("Workspace"):WaitForChild("RuntimeItems")
 
-            for _, v in pairs(runtimeItems:GetChildren()) do
-                if v.Name == "Bond" or v.Name == "Bonds" then
-                    sssss:FireServer(v)
-                end
+        for _, v in pairs(runtimeItems:GetChildren()) do
+            if v.Name == "Bond" or v.Name == "Bonds" then
+                sssss:FireServer(v)
             end
         end
-        task.wait(0.4)
+        -- Updated delay interval to reduce remote exhaustion
+        task.wait(1)
     end
 end)
-
 
 
 local pathPoints = {
