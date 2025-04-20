@@ -50,7 +50,7 @@ spawn(function()
                 end
             end
         end
-        task.wait()
+        task.wait(0.4)
     end
 end)
 
