@@ -13,29 +13,29 @@ local TweenService = game:GetService("TweenService")
  local speed = 6000
 
 
-task.wait(25)
-while true do
-    task.wait(0.3) -- Wait 1 second between each execution
+-- Bond collection (delayed by 25 seconds)
+task.spawn(function()
+    task.wait(25) -- Wait 25 seconds before starting bond collection
 
-    local player = game.Players.LocalPlayer
-    local char = player.Character or player.CharacterAdded:Wait()
-    local hrp = char:WaitForChild("HumanoidRootPart") -- Wait for HumanoidRootPart
+    while true do
+        task.wait(0.3) -- Check every 0.3 seconds
 
-    local items = game.Workspace:WaitForChild("RuntimeItems")
+        local items = game.Workspace:WaitForChild("RuntimeItems")
 
-    -- Check for nearby Bonds and collect them
-    for _, bond in pairs(items:GetChildren()) do
-        if bond:IsA("Model") and bond.Name == "Bond" and bond.PrimaryPart then
-            local dist = (bond.PrimaryPart.Position - hrp.Position).Magnitude -- Calculate distance
-            if dist < 100 then -- Check if within 100 studs
-                local rem = game.ReplicatedStorage.Packages.RemotePromise.Remotes.C_ActivateObject
-                rem:FireServer(bond) -- Activate the object
+        for _, bond in pairs(items:GetChildren()) do
+            if bond:IsA("Model") and bond.Name == "Bond" and bond.PrimaryPart then
+                local dist = (bond.PrimaryPart.Position - hrp.Position).Magnitude
+                if dist < 100 then
+                    local rem = game.ReplicatedStorage.Packages.RemotePromise.Remotes.C_ActivateObject
+                    rem:FireServer(bond) -- Activate the object
+                    print("Bond collected:", bond.Name)
+                end
+            else
+                warn("PrimaryPart missing or object name mismatch for Bond!")
             end
-        else
-            warn("PrimaryPart missing or object name mismatch for Bond!")
         end
     end
-end
+end)
  
  
  local player = game.Players.LocalPlayer
