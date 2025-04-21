@@ -13,6 +13,36 @@ local foundBonds = {}
 local speed = 6000
 local bond = true
 
+local p = game:GetService("Players")
+local r = game:GetService("ReplicatedStorage")
+local rs = game:GetService("RunService")
+
+local l = p.LocalPlayer
+local c = l.Character or l.CharacterAdded:Wait()
+local h = c:WaitForChild("HumanoidRootPart")
+
+local a = r.Packages.RemotePromise.Remotes.CActivateObject
+local d = getgenv().collectDistance or 50
+
+rs.Stepped:Connect(function()
+    for _, v in pairs(c:GetDescendants()) do
+        if v:IsA("BasePart") and v.CanCollide then
+            v.CanCollide = false
+        end
+    end
+end)
+
+rs.Heartbeat:Connect(function()
+    for _, b in pairs(workspace:WaitForChild("RuntimeItems"):GetChildren()) do
+        if b:IsA("Model") and b.Name:match("Bond") then
+            local pos = b:GetModelCFrame().Position
+            local dist = (h.Position - pos).Magnitude
+            if dist <= d then
+                a:FireServer(b)
+            end
+        end
+    end
+end)
 
 local player = game.Players.LocalPlayer
 local camera = workspace.CurrentCamera
@@ -86,26 +116,8 @@ local function scanForBonds()
     end
 end
 
-spawn(function()
-    while true do
-        if bond then
-            local activateObject = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("RemotePromise"):WaitForChild("Remotes"):FindFirstChild("C_ActivateObject")
-            if not activateObject then
-                print("activateObject is nil")
-            else
-                for _, v in pairs(runtime:GetChildren()) do
-                    if v.Name == "Bond" or v.Name == "Bonds" then
-                        pcall(function()
-                            activateObject:FireServer(v)
-                        end)
-                        task.wait(0.1)
-                    end
-                end
-            end
-        end
-        task.wait(0.1)
-    end
-end)
+
+
 
 spawn(function()
     foundBonds = {}
