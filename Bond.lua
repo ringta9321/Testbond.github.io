@@ -12,6 +12,8 @@ local TweenService = game:GetService("TweenService")
  local foundBonds = {}
  local speed = 6000
 
+
+task.wait(25)
 while true do
     task.wait(0.3) -- Wait 1 second between each execution
 
