@@ -12,6 +12,15 @@ local TweenService = game:GetService("TweenService")
  local foundBonds = {}
  local speed = 6000
 
+while true do
+    local args = {
+        [1] = false
+    }
+
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("EndDecision"):FireServer(unpack(args))
+    
+    wait(3) -- Wait for 3 seconds before running again
+end
 
 -- Bond collection (delayed by 25 seconds)
 task.spawn(function()
