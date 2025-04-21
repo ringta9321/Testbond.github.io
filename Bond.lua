@@ -11,24 +11,30 @@ local camera = workspace.CurrentCamera
 
 local foundBonds = {}
 local speed = 6000
-local bond = true
-
 
 -- Bond collection variables
 local collectDistance = 10
 local collectingBonds = true
+
+local player = game:GetService("Players").LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local runtimeItems = Workspace:FindFirstChild("RuntimeItems")
+local remote = game:GetService("ReplicatedStorage").Packages.RemotePromise.Remotes.CActivateObject
 
 -- Function to get the nearest bond
 local function GetNearestBond()
     local closestBond = nil
     local closestDistance = math.huge
 
-    for _, bond in pairs(Workspace.RuntimeItems:GetChildren()) do
-        if bond:IsA("Model") and bond.Name:match("Bond") then
-            local distance = (humanoidRootPart.Position - bond:GetModelCFrame().Position).Magnitude
-            if distance < closestDistance then
-                closestBond = bond
-                closestDistance = distance
+    if runtimeItems then
+        for _, bond in pairs(runtimeItems:GetChildren()) do
+            if bond:IsA("Model") and bond.Name:match("Bond") and bond.PrimaryPart then
+                local distance = (humanoidRootPart.Position - bond.PrimaryPart.Position).Magnitude
+                if distance < closestDistance then
+                    closestBond = bond
+                    closestDistance = distance
+                end
             end
         end
     end
@@ -49,6 +55,7 @@ end
 
 -- Start bond collection in a separate thread
 spawn(CollectBonds)
+
 
 
 local player = game.Players.LocalPlayer
