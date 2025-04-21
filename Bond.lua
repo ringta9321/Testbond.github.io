@@ -18,7 +18,7 @@ task.spawn(function()
     task.wait(25) -- Wait 25 seconds before starting bond collection
 
     while true do
-        task.wait(0.3) -- Check every 0.3 seconds
+        task.wait(0.2) -- Check every 0.3 seconds
 
         local items = game.Workspace:WaitForChild("RuntimeItems")
 
