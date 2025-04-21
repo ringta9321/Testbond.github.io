@@ -146,7 +146,7 @@ end)
      task.wait(5)
  
      local collectStart = tick()
-     while tick() - collectStart < 45 do
+     while tick() - collectStart < 60 do
          for _, pos in ipairs(foundBonds) do
              pcall(function()
                  hrp.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0))
