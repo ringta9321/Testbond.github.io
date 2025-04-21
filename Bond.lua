@@ -13,36 +13,43 @@ local foundBonds = {}
 local speed = 6000
 local bond = true
 
-local p = game:GetService("Players")
-local r = game:GetService("ReplicatedStorage")
-local rs = game:GetService("RunService")
 
-local l = p.LocalPlayer
-local c = l.Character or l.CharacterAdded:Wait()
-local h = c:WaitForChild("HumanoidRootPart")
+-- Bond collection variables
+local collectDistance = 10
+local collectingBonds = true
 
-local a = r.Packages.RemotePromise.Remotes.CActivateObject
-local d = getgenv().collectDistance or 50
+-- Function to get the nearest bond
+local function GetNearestBond()
+    local closestBond = nil
+    local closestDistance = math.huge
 
-rs.Stepped:Connect(function()
-    for _, v in pairs(c:GetDescendants()) do
-        if v:IsA("BasePart") and v.CanCollide then
-            v.CanCollide = false
-        end
-    end
-end)
-
-rs.Heartbeat:Connect(function()
-    for _, b in pairs(workspace:WaitForChild("RuntimeItems"):GetChildren()) do
-        if b:IsA("Model") and b.Name:match("Bond") then
-            local pos = b:GetModelCFrame().Position
-            local dist = (h.Position - pos).Magnitude
-            if dist <= d then
-                a:FireServer(b)
+    for _, bond in pairs(Workspace.RuntimeItems:GetChildren()) do
+        if bond:IsA("Model") and bond.Name:match("Bond") then
+            local distance = (humanoidRootPart.Position - bond:GetModelCFrame().Position).Magnitude
+            if distance < closestDistance then
+                closestBond = bond
+                closestDistance = distance
             end
         end
     end
-end)
+
+    return closestBond, closestDistance
+end
+
+-- Function to collect bonds infinitely (no walking)
+local function CollectBonds()
+    while collectingBonds do
+        local bond, distance = GetNearestBond()
+        if bond and distance <= collectDistance then
+            remote:FireServer(bond)
+        end
+        task.wait(0.1)
+    end
+end
+
+-- Start bond collection in a separate thread
+spawn(CollectBonds)
+
 
 local player = game.Players.LocalPlayer
 local camera = workspace.CurrentCamera
