@@ -1,192 +1,179 @@
-local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+-- Skidder's Dream GUI by NotImportant
+local Gui = Instance.new("ScreenGui")
+local Toggle = Instance.new("TextButton")
+local Main = Instance.new("Frame")
+local UIStroke = Instance.new("UIStroke")
+local UICorner = Instance.new("UICorner")
+local Title = Instance.new("TextLabel")
+local LinkBox = Instance.new("TextBox")
+local FileBox = Instance.new("TextBox")
+local IB2Btn = Instance.new("TextButton")
+local MoonsecBtn = Instance.new("TextButton")
+local Credit = Instance.new("TextLabel")
 
-local player = Players.LocalPlayer
-local char = player.Character or player.CharacterAdded:Wait()
-local hrp = char:WaitForChild("HumanoidRootPart")
-local runtime = workspace:WaitForChild("RuntimeItems")
-local camera = workspace.CurrentCamera
+Gui.Name = "SkidderDream"
+Gui.Parent = game.CoreGui
+Gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-local foundBonds = {}
-local speed = 6000
+-- Toggle Button
+Toggle.Parent = Gui
+Toggle.AnchorPoint = Vector2.new(1, 0.5)
+Toggle.Position = UDim2.new(1, -10, 0.5, 0)
+Toggle.Size = UDim2.new(0, 40, 0, 40)
+Toggle.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Toggle.Text = "+"
+Toggle.TextColor3 = Color3.fromRGB(255, 102, 0)
+Toggle.Font = Enum.Font.GothamBold
+Toggle.TextScaled = true
+Toggle.BorderSizePixel = 0
 
--- Bond collection variables
-local collectDistance = 10
-local collectingBonds = true
+-- Main Frame
+Main.Parent = Gui
+Main.AnchorPoint = Vector2.new(0.5, 0.5)
+Main.Position = UDim2.new(0.5, 0, 0.5, 0)
+Main.Size = UDim2.new(0, 300, 0, 240)
+Main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Main.BorderSizePixel = 0
+Main.Visible = true
 
-local player = game:GetService("Players").LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-local runtimeItems = Workspace:FindFirstChild("RuntimeItems")
-local remote = game:GetService("ReplicatedStorage").Packages.RemotePromise.Remotes.CActivateObject
+UICorner.Parent = Main
 
--- Function to get the nearest bond
-local function GetNearestBond()
-    local closestBond = nil
-    local closestDistance = math.huge
+UIStroke.Parent = Main
+UIStroke.Thickness = 2
+UIStroke.Color = Color3.fromRGB(255, 102, 0)
 
-    if runtimeItems then
-        for _, bond in pairs(runtimeItems:GetChildren()) do
-            if bond:IsA("Model") and bond.Name:match("Bond") and bond.PrimaryPart then
-                local distance = (humanoidRootPart.Position - bond.PrimaryPart.Position).Magnitude
-                if distance < closestDistance then
-                    closestBond = bond
-                    closestDistance = distance
-                end
-            end
-        end
-    end
-
-    return closestBond, closestDistance
-end
-
--- Function to collect bonds infinitely (no walking)
-local function CollectBonds()
-    while collectingBonds do
-        local bond, distance = GetNearestBond()
-        if bond and distance <= collectDistance then
-            remote:FireServer(bond)
-        end
-        task.wait(0.1)
-    end
-end
-
--- Start bond collection in a separate thread
-spawn(CollectBonds)
-
-
-
-local player = game.Players.LocalPlayer
-local camera = workspace.CurrentCamera
-
-local moveSpeed = 4 -- Increased speed for faster oscillation
-local amplitude = 5 -- Adjust the range of movement
-local time = 0 -- Keeps track of time for oscillation
-
--- Ensure camera stays in first-person mode
-camera.CameraType = Enum.CameraType.Custom
-player.CameraMode = Enum.CameraMode.LockFirstPerson
-
--- Oscillate the camera's orientation
-game:GetService("RunService").RenderStepped:Connect(function(deltaTime)
-    time = time + deltaTime
-    local xRotation = math.sin(time * moveSpeed) * amplitude
-    local yRotation = math.cos(time * moveSpeed) * amplitude
-    
-    local currentCFrame = camera.CFrame
-    camera.CFrame = currentCFrame * CFrame.Angles(math.rad(yRotation), math.rad(xRotation), 0)
+-- Animation: Pulsing Orange-Black Outline
+task.spawn(function()
+	while true do
+		for i = 0, 1, 0.05 do
+			UIStroke.Color = Color3.new(1, 0.4 + (0.2 * math.sin(tick()*3)), 0)
+			wait(0.03)
+		end
+	end
 end)
 
-local pathPoints = {
-    Vector3.new(13.66, 120, 29620.67), Vector3.new(-15.98, 120, 28227.97),
-    Vector3.new(-63.54, 120, 26911.59), Vector3.new(-75.71, 120, 25558.11),
-    Vector3.new(-49.51, 120, 24038.67), Vector3.new(-34.48, 120, 22780.89),
-    Vector3.new(-63.71, 120, 21477.32), Vector3.new(-84.23, 120, 19970.94),
-    Vector3.new(-84.76, 120, 18676.13), Vector3.new(-87.32, 120, 17246.92),
-    Vector3.new(-95.48, 120, 15988.29), Vector3.new(-93.76, 120, 14597.43),
-    Vector3.new(-86.29, 120, 13223.68), Vector3.new(-97.56, 120, 11824.61),
-    Vector3.new(-92.71, 120, 10398.51), Vector3.new(-98.43, 120, 9092.45),
-    Vector3.new(-90.89, 120, 7741.15), Vector3.new(-86.46, 120, 6482.59),
-    Vector3.new(-77.49, 120, 5081.21), Vector3.new(-73.84, 120, 3660.66),
-    Vector3.new(-73.84, 120, 2297.51), Vector3.new(-76.56, 120, 933.68),
-    Vector3.new(-81.48, 120, -429.93), Vector3.new(-83.47, 120, -1683.45),
-    Vector3.new(-94.18, 120, -3035.25), Vector3.new(-109.96, 120, -4317.15),
-    Vector3.new(-119.63, 120, -5667.43), Vector3.new(-118.63, 120, -6942.88),
-    Vector3.new(-118.09, 120, -8288.66), Vector3.new(-132.12, 120, -9690.39),
-    Vector3.new(-122.83, 120, -11051.38), Vector3.new(-117.53, 120, -12412.74),
-    Vector3.new(-119.81, 120, -13762.14),Vector3.new(-126.27, 120, -15106.33),
-    Vector3.new(-134.45, 120, -16563.82),Vector3.new(-129.85, 120, -17884.73),
-    Vector3.new(-127.23, 120, -19234.89),Vector3.new(-133.49, 120, -20584.07),
-    Vector3.new(-137.89, 120, -21933.47),Vector3.new(-139.93, 120, -23272.51),
-    Vector3.new(-144.12, 120, -24612.54),Vector3.new(-142.93, 120, -25962.13),
-    Vector3.new(-149.21, 120, -27301.58),Vector3.new(-156.19, 120, -28640.93),
-    Vector3.new(-164.87, 120, -29990.78),Vector3.new(-177.65, 120, -31340.21),
-    Vector3.new(-184.67, 120, -32689.24),Vector3.new(-208.92, 120, -34027.44),
-    Vector3.new(-227.96, 120, -35376.88),Vector3.new(-239.45, 120, -36726.59),
-    Vector3.new(-250.48, 120, -38075.91),Vector3.new(-260.28, 120, -39425.56),
-    Vector3.new(-274.86, 120, -40764.67),Vector3.new(-297.45, 120, -42103.61),
-    Vector3.new(-321.64, 120, -43442.59),Vector3.new(-356.78, 120, -44771.52),
-    Vector3.new(-387.68, 120, -46100.94),Vector3.new(-415.83, 120, -47429.85),
-    Vector3.new(-452.39, 120, -49407.44)
-}
+-- Title
+Title.Parent = Main
+Title.Position = UDim2.new(0, 0, 0, 5)
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.Text = "Skidder's Dream"
+Title.TextColor3 = Color3.fromRGB(255, 102, 0)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 22
 
-local function scanForBonds()
-    for _, m in ipairs(runtime:GetChildren()) do
-        if m:IsA("Model") and (m.Name == "Bond" or m.Name == "Bonds") and m.PrimaryPart then
-            local p = m.PrimaryPart.Position
-            local exists = false
-            for _, v in ipairs(foundBonds) do
-                if (v - p).Magnitude < 1 then
-                    exists = true
-                    break
-                end
-            end
-            if not exists then
-                table.insert(foundBonds, p)
-            end
-        end
-    end
+-- Link / Loadstring Box
+LinkBox.Parent = Main
+LinkBox.PlaceholderText = "Put loadstring or link here"
+LinkBox.Size = UDim2.new(0.9, 0, 0, 30)
+LinkBox.Position = UDim2.new(0.05, 0, 0.25, 0)
+LinkBox.Text = ""
+LinkBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+LinkBox.PlaceholderColor3 = Color3.fromRGB(180, 90, 0)
+LinkBox.Font = Enum.Font.Code
+LinkBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+LinkBox.BorderSizePixel = 0
+UICorner:Clone().Parent = LinkBox
+
+-- Filename Box
+FileBox.Parent = Main
+FileBox.PlaceholderText = "Enter filename (optional)"
+FileBox.Size = UDim2.new(0.9, 0, 0, 30)
+FileBox.Position = UDim2.new(0.05, 0, 0.45, 0)
+FileBox.Text = ""
+FileBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+FileBox.PlaceholderColor3 = Color3.fromRGB(180, 90, 0)
+FileBox.Font = Enum.Font.Code
+FileBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+FileBox.BorderSizePixel = 0
+UICorner:Clone().Parent = FileBox
+
+-- IB2 Button
+IB2Btn.Parent = Main
+IB2Btn.Text = "IronBrew2"
+IB2Btn.Size = UDim2.new(0.42, 0, 0, 30)
+IB2Btn.Position = UDim2.new(0.05, 0, 0.65, 0)
+IB2Btn.Font = Enum.Font.GothamBold
+IB2Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+IB2Btn.BackgroundColor3 = Color3.fromRGB(255, 102, 0)
+IB2Btn.BorderSizePixel = 0
+UICorner:Clone().Parent = IB2Btn
+
+-- Moonsec Button
+MoonsecBtn.Parent = Main
+MoonsecBtn.Text = "MoonsecV3"
+MoonsecBtn.Size = UDim2.new(0.42, 0, 0, 30)
+MoonsecBtn.Position = UDim2.new(0.53, 0, 0.65, 0)
+MoonsecBtn.Font = Enum.Font.GothamBold
+MoonsecBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MoonsecBtn.BackgroundColor3 = Color3.fromRGB(255, 102, 0)
+MoonsecBtn.BorderSizePixel = 0
+UICorner:Clone().Parent = MoonsecBtn
+
+-- Credit
+Credit.Parent = Main
+Credit.Text = "Made by NotImportant btw"
+Credit.Size = UDim2.new(1, 0, 0, 20)
+Credit.Position = UDim2.new(0, 0, 1, -25)
+Credit.BackgroundTransparency = 1
+Credit.TextColor3 = Color3.fromRGB(100, 100, 100)
+Credit.Font = Enum.Font.Gotham
+Credit.TextSize = 12
+
+-- Toggle Logic
+local open = true
+Toggle.MouseButton1Click:Connect(function()
+	open = not open
+	Main.Visible = open
+	Toggle.Text = open and "-" or "+"
+end)
+
+-- Dump Functions
+local function notify(msg)
+	game:GetService("StarterGui"):SetCore("SendNotification", {
+		Title = "Skidder's Dream",
+		Text = msg,
+		Duration = 4
+	})
 end
 
+local function dumpIronBrew2(link)
+	if not link:match("^https?://") then
+		notify("Invalid link!")
+		return
+	end
+	local file = FileBox.Text ~= "" and FileBox.Text or "ironbrew2_dump.lua"
+	local scriptContent = game:HttpGet(link)
+	writefile(file, "-- Dumped with IronBrew2\n\n" .. scriptContent)
+	notify("IronBrew2 dump saved to " .. file)
+end
 
+local function dumpMoonsecV3(link)
+	if not link:match("^https?://") then
+		notify("Invalid link!")
+		return
+	end
+	local file = FileBox.Text ~= "" and FileBox.Text or "moonsecv3_dump.lua"
+	local scriptContent = game:HttpGet(link)
+	writefile(file, "-- MoonsecV3 Dump\n\n" .. scriptContent)
+	notify("MoonsecV3 dump saved to " .. file)
+end
 
+-- Button Listeners
+IB2Btn.MouseButton1Click:Connect(function()
+	local link = LinkBox.Text
+	if link ~= "" then
+		dumpIronBrew2(link)
+	else
+		notify("Please enter a valid link!")
+	end
+end)
 
-spawn(function()
-    foundBonds = {}
-    local startTime = tick()
-    local scanConn = RunService.Heartbeat:Connect(scanForBonds)
-
-    for _, pt in ipairs(pathPoints) do
-        local dist = (hrp.Position - pt).Magnitude
-        local tween = TweenService:Create(
-            hrp,
-            TweenInfo.new(dist / speed, Enum.EasingStyle.Linear),
-            {CFrame = CFrame.new(pt)}
-        )
-        tween:Play()
-        tween.Completed:Wait()
-    end
-
-    scanConn:Disconnect()
-
-    if tick() - startTime < 25 then
-        task.wait(25 - (tick() - startTime))
-    end
-
-    pcall(function()
-        local loadFunction = loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/main/FASTCASTLE.lua"))
-        if not loadFunction then
-            print("Loadstring returned nil")
-        else
-            loadFunction()
-        end
-    end)
-    task.wait(5)
-
-    local collectStart = tick()
-    while tick() - collectStart < 60 do
-        for _, pos in ipairs(foundBonds) do
-            pcall(function()
-                hrp.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0))
-            end)
-            task.wait(0.5)
-        end
-    end
-
-    local function safeReset()
-        pcall(function()
-            player:RequestStreamAroundAsync(hrp.Position)
-            if player.Character then
-                player.Character:BreakJoints()
-                task.wait(0.2)
-                player:LoadCharacter()
-            end
-        end)
-    end
-
-    safeReset()
-    task.wait(1)
-    safeReset()
+MoonsecBtn.MouseButton1Click:Connect(function()
+	local link = LinkBox.Text
+	if link ~= "" then
+		dumpMoonsecV3(link)
+	else
+		notify("Please enter a valid link!")
+	end
 end)
