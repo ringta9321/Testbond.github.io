@@ -15,7 +15,7 @@ local TweenService = game:GetService("TweenService")
 
 -- Bond collection (delayed by 25 seconds)
 task.spawn(function()
-    task.wait(25) -- Wait 25 seconds before starting bond collection
+    task.wait(22) -- Wait 25 seconds before starting bond collection
 
     while true do
         task.wait(0.3) -- Check every 0.3 seconds
@@ -131,8 +131,8 @@ end)
  
      scanConn:Disconnect()
  
-     if tick() - startTime < 25 then
-         task.wait(25 - (tick() - startTime))
+     if tick() - startTime < 22 then
+         task.wait(22 - (tick() - startTime))
      end
  
      pcall(function()
