@@ -11,7 +11,29 @@ local TweenService = game:GetService("TweenService")
  
  local foundBonds = {}
  local speed = 6000
- local bond = true
+
+while true do
+    task.wait(0.3) -- Wait 1 second between each execution
+
+    local player = game.Players.LocalPlayer
+    local char = player.Character or player.CharacterAdded:Wait()
+    local hrp = char:WaitForChild("HumanoidRootPart") -- Wait for HumanoidRootPart
+
+    local items = game.Workspace:WaitForChild("RuntimeItems")
+
+    -- Check for nearby Bonds and collect them
+    for _, bond in pairs(items:GetChildren()) do
+        if bond:IsA("Model") and bond.Name == "Bond" and bond.PrimaryPart then
+            local dist = (bond.PrimaryPart.Position - hrp.Position).Magnitude -- Calculate distance
+            if dist < 100 then -- Check if within 100 studs
+                local rem = game.ReplicatedStorage.Packages.RemotePromise.Remotes.C_ActivateObject
+                rem:FireServer(bond) -- Activate the object
+            end
+        else
+            warn("PrimaryPart missing or object name mismatch for Bond!")
+        end
+    end
+end
  
  
  local player = game.Players.LocalPlayer
@@ -86,28 +108,7 @@ local TweenService = game:GetService("TweenService")
      end
  end
  
-while true do
-    task.wait(0.3) -- Wait 1 second between each execution
 
-    local player = game.Players.LocalPlayer
-    local char = player.Character or player.CharacterAdded:Wait()
-    local hrp = char:WaitForChild("HumanoidRootPart") -- Wait for HumanoidRootPart
-
-    local items = game.Workspace:WaitForChild("RuntimeItems")
-
-    -- Check for nearby Bonds and collect them
-    for _, bond in pairs(items:GetChildren()) do
-        if bond:IsA("Model") and bond.Name == "Bond" and bond.PrimaryPart then
-            local dist = (bond.PrimaryPart.Position - hrp.Position).Magnitude -- Calculate distance
-            if dist < 100 then -- Check if within 100 studs
-                local rem = game.ReplicatedStorage.Packages.RemotePromise.Remotes.C_ActivateObject
-                rem:FireServer(bond) -- Activate the object
-            end
-        else
-            warn("PrimaryPart missing or object name mismatch for Bond!")
-        end
-    end
-end
 
  
  spawn(function()
